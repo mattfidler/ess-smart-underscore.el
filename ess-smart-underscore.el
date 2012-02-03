@@ -6,9 +6,9 @@
 ;; Maintainer: Matthew Fidler
 ;; Created: Thu Jul 14 11:04:42 2011 (-0500)
 ;; Version: 0.72
-;; Last-Updated: Wed Aug  3 15:05:44 2011 (-0500)
+;; Last-Updated: Thu Feb  2 21:08:37 2012 (-0600)
 ;;           By: Matthew L. Fidler
-;;     Update #: 114
+;;     Update #: 118
 ;; URL: http://www.emacswiki.org/emacs/ess-smart-underscore.el
 ;; Keywords: ESS, underscore
 ;; Compatibility:
@@ -26,6 +26,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 ;;; Change Log:
+;; 02-Feb-2012    Matthew L. Fidler  
+;;    Last-Updated: Thu Feb  2 21:06:52 2012 (-0600) #117 (Matthew L. Fidler)
+;;    Took out auto-installing.  Most package managers don't want you
+;;    to do this.
 ;; 03-Aug-2011    Matthew L. Fidler  
 ;;    Last-Updated: Wed Aug  3 15:05:15 2011 (-0500) #112 (Matthew L. Fidler)
 ;;    Bug fix for parenthetical statement
@@ -180,11 +184,6 @@ an underscore is always inserted. "
 	    (insert "_"))
 	(delete-horizontal-space)
 	(insert ess-S-assign)))))
-
-;;;###autoload
-(add-hook 'ess-mode-hook
-          '(lambda ()
-             (require 'ess-smart-underscore)))
 
 (provide 'ess-smart-underscore)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
