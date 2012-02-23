@@ -6,9 +6,9 @@
 ;; Maintainer: Matthew Fidler
 ;; Created: Thu Jul 14 11:04:42 2011 (-0500)
 ;; Version: 0.73
-;; Last-Updated: Wed Feb 22 20:30:20 2012 (-0600)
+;; Last-Updated: Wed Feb 22 20:52:29 2012 (-0600)
 ;;           By: Matthew L. Fidler
-;;     Update #: 122
+;;     Update #: 125
 ;; URL: http://www.emacswiki.org/emacs/ess-smart-underscore.el
 ;; Keywords: ESS, underscore
 ;; Compatibility:
@@ -19,8 +19,8 @@
 ;;   `font-lock', `syntax', `widget'.
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; 
-;;; Commentary: 
+;;
+;;; Commentary:
 ;; 
 ;;  To use, put (require 'ess-smart-underscore) in your ~/.emacs file
 ;; 
