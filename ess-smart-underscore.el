@@ -6,10 +6,10 @@
 ;; Maintainer: Matthew Fidler
 ;; Created: Thu Jul 14 11:04:42 2011 (-0500)
 ;; Version: 0.73
-;; Last-Updated: Wed Feb 22 20:52:29 2012 (-0600)
+;; Last-Updated: Wed Feb 22 20:55:23 2012 (-0600)
 ;;           By: Matthew L. Fidler
-;;     Update #: 125
-;; URL: http://www.emacswiki.org/emacs/ess-smart-underscore.el
+;;     Update #: 126
+;; URL: http://github.com/mlf176f2/ess-smart-underscore.el
 ;; Keywords: ESS, underscore
 ;; Compatibility:
 ;; 
