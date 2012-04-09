@@ -1,14 +1,14 @@
 ;;; ess-smart-underscore.el --- Ess Smart Underscore
-;; 
+;;
 ;; Filename: ess-smart-underscore.el
 ;; Description: ess-smart-underscore
 ;; Author: Matthew L. Fidler
 ;; Maintainer: Matthew Fidler
 ;; Created: Thu Jul 14 11:04:42 2011 (-0500)
 ;; Version: 0.73
-;; Last-Updated: Wed Feb 22 20:55:23 2012 (-0600)
+;; Last-Updated: Mon Apr  9 15:27:09 2012 (-0500)
 ;;           By: Matthew L. Fidler
-;;     Update #: 126
+;;     Update #: 137
 ;; URL: http://github.com/mlf176f2/ess-smart-underscore.el
 ;; Keywords: ESS, underscore
 ;; Compatibility:
@@ -74,8 +74,8 @@
   "Should underscore produce an underscore if it is an element of a list/data structure?
 
  Used by \\[ess-smart-underscore]."
- :group 'ess-S
- :type 'boolean)
+  :group 'ess-S
+  :type 'boolean)
 
 (defcustom ess-S-underscore-after-defined t
   "Should underscore produce an underscore if it is after a variable has been defined?
@@ -113,6 +113,17 @@ This requires `ess-S-underscore-when-inside-paren' to be true.
   :group 'ess-S
   :type 'boolean)
 
+
+(defcustom ess-S-underscore-when-variable-contains-underscores t
+  "Should an underscore be produced instead of `ess-S-assign' when variable already contains an underscore?"
+  :group 'ess-S
+  :type 'boolean)
+
+(defcustom ess-S-underscore-when-last-character-is-a-space nil
+  "ESS produces an underscore only when the last character is not a space or a tab."
+  :group 'ess-S
+  :type 'boolean)
+
 ;;;###autoload
 (defun ess-smart-underscore ()
   "Smart \"_\" key: insert `ess-S-assign', unless:
@@ -124,6 +135,12 @@ This requires `ess-S-underscore-when-inside-paren' to be true.
      (toggle with `ess-S-underscore-after-<-or-=')
   5. inside a parenthetical statement () or [].
      (toggle with `ess-S-underscore-when-inside-paren')
+  6. At the beginning of a line.
+  7. In a variable that contains underscores already (for example foo_a)
+     (toggle with `ess-S-underscore-when-variable-contains-underscores')
+  8. The preceding character is not a tab/space
+     (toggle with `ess-S-underscore-when-last-character-is-a-space'.  Not enabled by default.)
+
 
 An exception to #4 is in the following situation:
 
@@ -148,9 +165,16 @@ operator is removed and replaced by the underscore.  `ess-S-assign',
 typically \" <- \", can be customized.  In ESS modes other than R/S,
 an underscore is always inserted. "
   (interactive)
-  ;;(insert (if (ess-inside-string-or-comment-p (point)) "_" ess-S-assign))
+  ;;(insert (if (ess-inside-string-or-comment-p (point)) "_"
+  ;;ess-S-assign))
+  (message "%s" (looking-back "_[^ \t\n]*?\\="))
   (if (or
        (not (equal ess-language "S"))
+       (looking-back "^[ \t\n]*\\=")
+       (and ess-S-underscore-when-variable-contains-underscores
+            (looking-back "_[^ \t\n]*?\\="))
+       (and ess-S-underscore-when-last-character-is-a-space
+            (looking-back "[^ \t]\\="))
        (ess-inside-string-or-comment-p (point))
        ;; Data
        (and ess-S-underscore-after-$ (save-match-data (save-excursion (re-search-backward "\\([$]\\)[A-Za-z0-9.]+\\=" nil t))))
