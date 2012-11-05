@@ -5,7 +5,7 @@
 ;; Author: Matthew L. Fidler
 ;; Maintainer: Matthew Fidler
 ;; Created: Thu Jul 14 11:04:42 2011 (-0500)
-;; Version: 0.73
+;; Version: 0.74
 ;; Last-Updated: Mon Apr  9 15:27:09 2012 (-0500)
 ;;           By: Matthew L. Fidler
 ;;     Update #: 137
@@ -22,11 +22,74 @@
 ;;
 ;;; Commentary:
 ;; 
-;;  To use, put (require 'ess-smart-underscore) in your ~/.emacs file
+;; * Installation
+;; 
+;; To use without using a package manager:
+;; 
+;;  - Put the library in a directory in the emacs load path, like ~/.emacs.d
+;;  - Add (require 'ess-smart-underscore) in your ~/.emacs file
+;; 
+;; This is in emacswiki, so this package can also be installed using el-get.
+;; 
+;; After installing el-get, Type M-x el-get-install ess-smart-underscore.
+;; * Ess-Smart Underscore Package Information
+;; Smart "_" key: insert `ess-S-assign', unless:
+;; 
+;;   1. in string/comment
+;;   2. after a $ (like d$one_two) (toggle with `ess-S-underscore-after-$')
+;;   3. when the underscore is part of a variable definition previously defined.
+;;      (toggle with `ess-S-underscore-after-defined')
+;;   4. when the underscore is after a "=" or "<-" on the same line.
+;;   5. inside a parenthetical statement () or [].
+;;      (toggle with `ess-S-underscore-when-inside-paren')
+;;   6. At the beginning of a line.
+;;   7. In a variable that contains underscores already (for example foo_a)
+;;      (toggle with `ess-S-underscore-when-variable-contains-underscores')
+;;   8. The preceding character is not a tab/space (toggle with
+;;      `ess-S-underscore-when-last-character-is-a-space'.  Not enabled
+;;      by default.)
+;; 
+;; An exception to 
+;; 
+;; 
+;; a <- b |
+;; 
+;; 
+;; Pressing an underscore here would produce
+;; 
+;; 
+;; 
+;; a <- b <-
+;; 
+;; 
+;; However when in the following situation
+;; 
+;; 
+;; a <- b|
+;; 
+;; 
+;; Pressing an underscore would produce
+;; 
+;; 
+;; a <- b_
+;; 
+;; 
+;; This behavior can be toggled by `ess-S-space-underscore-is-assignment'
+;; 
+;; If the underscore key is pressed a second time, the assignment
+;; operator is removed and replaced by the underscore.  `ess-S-assign',
+;; typically " <- ", can be customized.  In ESS modes other than R/S,
+;; an underscore is always inserted.
+;; 
+;; In addition the ess-smart-underscore attempts to work with noweb-mode
 ;; 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 ;;; Change Log:
+;; 05-Nov-2012    Matthew L. Fidler  
+;;    Last-Updated: Mon Apr  9 15:27:09 2012 (-0500) #137 (Matthew L. Fidler)
+;;    Better handling of noweb.  I think it Came from Denis Haine and
+;;    Martin Maechler.
 ;; 22-Feb-2012    Matthew L. Fidler  
 ;;    Last-Updated: Wed Feb 22 20:27:04 2012 (-0600) #120 (Matthew L. Fidler)
 ;;    Support unbalanced sexps.
@@ -168,65 +231,74 @@ an underscore is always inserted. "
   ;;(insert (if (ess-inside-string-or-comment-p (point)) "_"
   ;;ess-S-assign))
   (message "%s" (looking-back "_[^ \t\n]*?\\="))
-  (if (or
-       (not (equal ess-language "S"))
-       (looking-back "^[ \t\n]*\\=")
-       (and ess-S-underscore-when-variable-contains-underscores
-            (looking-back "_[^ \t\n]*?\\="))
-       (and ess-S-underscore-when-last-character-is-a-space
-            (looking-back "[^ \t]\\="))
-       (ess-inside-string-or-comment-p (point))
-       ;; Data
-       (and ess-S-underscore-after-$ (save-match-data (save-excursion (re-search-backward "\\([$]\\)[A-Za-z0-9.]+\\=" nil t))))
-       (and ess-S-underscore-after-<-or-=
-	    (let ((ret (save-match-data (and (not (looking-back ess-S-assign))
-					     (looking-back "\\(<-\\|\\<=\\>\\).*")))))
-              (if (and ret ess-S-space-underscore-is-assignment
-                       (looking-back "[ \t]"))
-                  (setq ret nil))
-	      (symbol-value 'ret)))
-       ;; Look for variable
-       (and ess-S-underscore-after-defined
-            (not (looking-back ess-S-assign)) ; Hack to fix bug
-	    (save-match-data
-	      (save-excursion
-		(let (word)
-		  (when (looking-back "\\<[A-Za-z0-9.]+[ \t]*")
-		    (setq word (match-string 0))
-		    (setq ret
-			  (or (re-search-backward (format "^[ \t]*%s_[A-Za-z0-9.]*[ \t]*\\(<-\\|=\\)" word) nil t)
-			      (re-search-backward (format "->[ \t]*%s_[A-Za-z0-9.]*[ \t]*$" word) nil t)))
-		    (symbol-value 'ret))))))
-       (and ess-S-underscore-when-inside-paren
-	    (save-match-data
-	      (save-excursion
-		(let ((pt (point))
-		      ret)
-		  (when (re-search-backward "\\((\\|\\[\\).*\\=" nil t)
-		    (condition-case err
-                        (progn
-                          (forward-sexp)
-                          (when (> (point) pt)
-                            (setq ret t)))
-                      (error
-                       (when ess-S-underscore-when-inside-unbalanced-parenthesis
-                         (setq ret 't)))))
-		  (symbol-value 'ret))))))
-      (insert "_")
-    ;; Else one keypress produces ess-S-assign; a second keypress will delete
-    ;; ess-S-assign and instead insert _
-    ;; Rather than trying to count a second _ keypress, just check whether
-    ;; the current point is preceded by ess-S-assign.
-    (let ((assign-len (length ess-S-assign)))
-      (if (and
-	   (>= (point) (+ assign-len (point-min))) ;check that we can move back
-	   (looking-back ess-S-assign))
-	  ;; If we are currently looking at ess-S-assign, replace it with _
-	  (progn
-	    (replace-match "")
-	    (insert "_"))
-	(delete-horizontal-space)
-	(insert ess-S-assign)))))
+  (save-restriction
+    (ignore-errors
+      (when (and (eq major-mode 'inferior-ess-mode)
+                 (> (point) (process-mark (get-buffer-process
+                                           (current-buffer)))))
+        (narrow-to-region (process-mark (get-ess-process)) (point-max)))
+      (and ess-noweb-mode
+           (noweb-in-code-chunk)
+           (noweb-narrow-to-chunk)))
+    (if (or
+         (not (equal ess-language "S"))
+         (looking-back "^[ \t\n]*\\=")
+         (and ess-S-underscore-when-variable-contains-underscores
+              (looking-back "_[^ \t\n]*?\\="))
+         (and ess-S-underscore-when-last-character-is-a-space
+              (looking-back "[^ \t]\\="))
+         (ess-inside-string-or-comment-p (point))
+         ;; Data
+         (and ess-S-underscore-after-$ (save-match-data (save-excursion (re-search-backward "\\([$]\\)[A-Za-z0-9.]+\\=" nil t))))
+         (and ess-S-underscore-after-<-or-=
+              (let ((ret (save-match-data (and (not (looking-back ess-S-assign))
+                                               (looking-back "\\(<-\\|\\<=\\>\\).*")))))
+                (if (and ret ess-S-space-underscore-is-assignment
+                         (looking-back "[ \t]"))
+                    (setq ret nil))
+                (symbol-value 'ret)))
+         ;; Look for variable
+         (and ess-S-underscore-after-defined
+              (not (looking-back ess-S-assign)) ; Hack to fix bug
+              (save-match-data
+                (save-excursion
+                  (let (word)
+                    (when (looking-back "\\<[A-Za-z0-9.]+[ \t]*")
+                      (setq word (match-string 0))
+                      (setq ret
+                            (or (re-search-backward (format "^[ \t]*%s_[A-Za-z0-9.]*[ \t]*\\(<-\\|=\\)" word) nil t)
+                                (re-search-backward (format "->[ \t]*%s_[A-Za-z0-9.]*[ \t]*$" word) nil t)))
+                      (symbol-value 'ret))))))
+         (and ess-S-underscore-when-inside-paren
+              (save-match-data
+                (save-excursion
+                  (let ((pt (point))
+                        ret)
+                    (when (re-search-backward "\\((\\|\\[\\).*\\=" nil t)
+                      (condition-case err
+                          (progn
+                            (forward-sexp)
+                            (when (> (point) pt)
+                              (setq ret t)))
+                        (error
+                         (when ess-S-underscore-when-inside-unbalanced-parenthesis
+                           (setq ret 't)))))
+                    (symbol-value 'ret))))))
+        (insert "_")
+      ;; Else one keypress produces ess-S-assign; a second keypress will delete
+      ;; ess-S-assign and instead insert _
+      ;; Rather than trying to count a second _ keypress, just check whether
+      ;; the current point is preceded by ess-S-assign.
+      (let ((assign-len (length ess-S-assign)))
+        (if (and
+             (>= (point) (+ assign-len (point-min))) ;check that we can move back
+             (looking-back ess-S-assign))
+            ;; If we are currently looking at ess-S-assign, replace it with _
+            (progn
+              (replace-match "")
+              (insert "_"))
+          (delete-horizontal-space)
+          (insert ess-S-assign))))))
 
 (provide 'ess-smart-underscore)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
