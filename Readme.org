@@ -8,7 +8,7 @@
  - Author :: Matthew L. Fidler
  - Maintainer :: Matthew Fidler
  - Created :: Thu Jul 14 11:04:42 2011 (-0500)
- - Version :: 0.75
+ - Version :: 0.77
  - Last-Updated :: Mon Apr  9 15:27:09 2012 (-0500)
  -           By :: Matthew L. Fidler
  -     Update # :: 137
@@ -84,6 +84,8 @@ In addition the ess-smart-underscore attempts to work with noweb-mode
 
 * History
 
+ - 21-May-2013 ::  Added hook to R-mode to make it behave a little better. (Matthew L. Fidler)
+ - 15-May-2013 ::  Fixed ess-smart-underscore to work in an inferior R process. (Matthew L. Fidler)
  - 15-May-2013 ::  Added ggplot function prefixes.  (Matthew L. Fidler)
  - 05-Nov-2012 ::  Better handling of noweb. I think it Came from Denis Haine and Martin Maechler. (Matthew L. Fidler)
  - 22-Feb-2012 ::  Support unbalanced sexps. (Matthew L. Fidler)
