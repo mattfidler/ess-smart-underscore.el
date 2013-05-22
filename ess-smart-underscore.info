@@ -35,7 +35,7 @@ Ess Smart Underscore
 
    * *Created* - Thu Jul 14 11:04:42 2011 (-0500)
 
-   * *Version* - 0.78
+   * *Version* - 0.79
 
    * *Last-Updated* - Mon Apr 9 15:27:09 2012 (-0500)
 
@@ -135,6 +135,8 @@ File: ess-smart-underscore.info,  Node: History,  Prev: Installation,  Up: ESS S
 1.3 History
 ===========
 
+   * *22-May-2013* - Added more ggplot operators. (Matthew L. Fidler)
+
    * *21-May-2013* - Added math to ggplot's functions... (Matthew L.
      Fidler)
 
@@ -161,16 +163,17 @@ File: ess-smart-underscore.info,  Node: History,  Prev: Installation,  Up: ESS S
      inside a parenthetical statement. (Matthew L. Fidler)
 
    * *15-Jul-2011* - Bug fix for d[dCMT " 2,"DV"] _ to produce d[dCMT "
-     2,"DV"] <- (Matthew L. Fidler)* Functions ### Interactive Functions
+     2,"DV"] <- (Matthew L. Fidler)* Variables ### Customizable
+     Variables
 
 * Menu:
 
-* Internal Functions::
+* Internal Variables::
 
 
-File: ess-smart-underscore.info,  Node: Internal Functions,  Up: History
+File: ess-smart-underscore.info,  Node: Internal Variables,  Up: History
 
-1.3.1 Internal Functions
+1.3.1 Internal Variables
 ------------------------
 
 
@@ -181,7 +184,7 @@ Node: ESS Smart Underscore386
 Node: Possible Dependencies1131
 Node: Installation1384
 Node: History3292
-Node: Internal Functions4495
+Node: Internal Variables4572
 
 End Tag Table
 
