@@ -10,6 +10,7 @@
 ;;           By: Matthew L. Fidler
 ;;     Update #: 137
 ;; URL: http://github.com/mlf176f2/ess-smart-underscore.el
+;; Package-Requires: ((ess "0"))
 ;; Keywords: ESS, underscore
 ;; Compatibility:
 ;; 
