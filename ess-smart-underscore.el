@@ -306,7 +306,7 @@ an underscore is always inserted. "
       (when (and (eq major-mode 'inferior-ess-mode)
                  (> (point) (process-mark (get-buffer-process
                                            (current-buffer)))))
-        (narrow-to-region (process-mark (get-ess-process)) (point-max)))
+        (narrow-to-region (process-mark (get-process ess-local-process-name)) (point-max)))
       (and ess-noweb-mode
            (noweb-in-code-chunk)
            (noweb-narrow-to-chunk)))
