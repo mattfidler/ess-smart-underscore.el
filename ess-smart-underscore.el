@@ -149,6 +149,13 @@
 ;;; Code:
 (require 'ess)
 
+(defcustom ess-S-underscore-after-:: t
+  "Should underscore produce an underscore if it is after a :: structure
+
+ Used by \\[ess-smart-underscore]."
+  :group 'ess-S
+  :type 'boolean)
+
 (defcustom ess-S-underscore-after-$ t
   "Should underscore produce an underscore if it is an element of a list/data structure?
 
@@ -205,6 +212,7 @@ This requires `ess-S-underscore-when-inside-paren' to be true.
     "discrete"
     "element"
     "expand"
+    "expect"
     "facet"
     "geom"
     "gg"
@@ -222,6 +230,7 @@ This requires `ess-S-underscore-when-inside-paren' to be true.
     "scale_x"
     "scale_y"
     "stat"
+    "test"
     "theme"
     "trans"
     "translate"
@@ -229,6 +238,7 @@ This requires `ess-S-underscore-when-inside-paren' to be true.
     "update"
     "update_"
     "update_geom"
+    "load"
     )
   "Things that should have underscores after them. "
   :group 'ess-S
@@ -310,6 +320,7 @@ an underscore is always inserted. "
               (looking-back "[^ \t]\\="))
          (ess-inside-string-or-comment-p (point))
          ;; Data
+	 (and ess-S-underscore-after-:: (save-match-data (save-excursion (re-search-backward "\\([:][:]\\)[A-Za-z0-9.]+\\=" nil t))))
          (and ess-S-underscore-after-$ (save-match-data (save-excursion (re-search-backward "\\([$]\\)[A-Za-z0-9.]+\\=" nil t))))
          (and ess-S-underscore-after-<-or-=
               (let ((ret (save-match-data (and (not (looking-back ess-S-assign))
