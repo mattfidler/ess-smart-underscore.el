@@ -148,7 +148,8 @@
 ;; 
 ;;; Code:
 (require 'ess)
-
+(when (not (boundp 'ess-S-assign))
+  (setq ess-S-assign " <- "))
 (defcustom ess-S-underscore-after-:: t
   "Should underscore produce an underscore if it is after a :: structure
 
