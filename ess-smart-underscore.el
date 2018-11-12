@@ -256,7 +256,6 @@ This requires `ess-S-underscore-when-inside-paren' to be true.
   "ESS produces an underscore only when the last character is not a space or a tab."
   :group 'ess-S
   :type 'boolean)
-
 ;;;###autoload
 (defun ess-smarter-underscore ()
   "Smart \"_\" key: insert `ess-S-assign', unless:
@@ -373,6 +372,11 @@ an underscore is always inserted. "
           (delete-horizontal-space)
           (insert ess-S-assign))))))
 (define-key ess-mode-map (kbd "_") 'ess-smarter-underscore)
+;;;###autoload
+(defun ess-smart-underscore ()
+  "Alias to `ess-smarter-underscore'."
+  (ess-smarter-underscore))
+
 
 (defun ess-smart-underscore-add-inf ()
   "Add to inferior mode."
