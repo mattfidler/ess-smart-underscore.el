@@ -371,7 +371,6 @@ an underscore is always inserted. "
               (insert "_"))
           (delete-horizontal-space)
           (insert ess-S-assign))))))
-(define-key ess-mode-map (kbd "_") 'ess-smarter-underscore)
 ;;;###autoload
 (defun ess-smart-underscore ()
   "Alias to `ess-smarter-underscore'."
