@@ -147,7 +147,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; 
 ;;; Code:
-(require 'ess)
+(unwind-protect (require 'ess))
+(unwind-protect (require 'ess-mode))
+
 (when (not (boundp 'ess-S-assign))
   (setq ess-S-assign " <- "))
 (defcustom ess-S-underscore-after-:: t
