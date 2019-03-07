@@ -324,16 +324,16 @@ an underscore is always inserted. "
          ;; Data
 	 (and ess-S-underscore-after-:: (save-match-data (save-excursion (re-search-backward "\\([:][:]\\)[A-Za-z0-9.]+\\=" nil t))))
          (and ess-S-underscore-after-$ (save-match-data (save-excursion (re-search-backward "\\([$]\\)[A-Za-z0-9.]+\\=" nil t))))
-         (and ess-S-underscore-after-<-or-=
-              (let ((ret (save-match-data (and (not (looking-back ess-S-assign))
-                                               (looking-back "\\(<-\\|\\<=\\>\\).*")))))
-                (if (and ret ess-S-space-underscore-is-assignment
-                         (looking-back "[ \t]"))
-                    (setq ret nil))
-                (symbol-value 'ret)))
+         ;; (and ess-S-underscore-after-<-or-=
+         ;;      (let ((ret (save-match-data (and (not (looking-back (regexp-opt ess-assign-list)))
+         ;;                                       ))))
+         ;;        (if (and ret ess-S-space-underscore-is-assignment
+         ;;                 (looking-back "[ \t]"))
+         ;;            (setq ret nil))
+         ;;        (symbol-value 'ret)))
          ;; Look for variable
          (and ess-S-underscore-after-defined
-              (not (looking-back ess-S-assign)) ; Hack to fix bug
+              (not (regexp-opt ess-assign-list)) ; Hack to fix bug
               (save-match-data
                 (save-excursion
                   (let (word)
@@ -363,16 +363,12 @@ an underscore is always inserted. "
       ;; ess-S-assign and instead insert _
       ;; Rather than trying to count a second _ keypress, just check whether
       ;; the current point is preceded by ess-S-assign.
-      (let ((assign-len (length ess-S-assign)))
-        (if (and
-             (>= (point) (+ assign-len (point-min))) ;check that we can move back
-             (looking-back ess-S-assign))
-            ;; If we are currently looking at ess-S-assign, replace it with _
-            (progn
-              (replace-match "")
-              (insert "_"))
-          (delete-horizontal-space)
-          (insert ess-S-assign))))))
+      (save-match-data
+	(looking-back "\\<\\w+")
+	(if (= 0 (length (ess-r-get-rcompletions nil nil (concat (match-string 0) "_"))))
+	    (insert "_")
+	  (call-interactively 'ess-cycle-assign))))))
+
 ;;;###autoload
 (defun ess-smart-underscore ()
   "Alias to `ess-smarter-underscore'."
