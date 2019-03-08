@@ -365,9 +365,14 @@ an underscore is always inserted. "
       ;; the current point is preceded by ess-S-assign.
       (save-match-data
 	(looking-back "\\<\\w+")
-	(if (= 0 (length (ess-r-get-rcompletions nil nil (concat (match-string 0) "_"))))
-	    (insert "_")
-	  (call-interactively 'ess-cycle-assign))))))
+	(let* ((ms (match-string 0))
+	       (s (ess-r-get-rcompletions nil nil (concat ms  "_")))
+	       (l (length s)))
+	  (message "Message looking for %s; %s; %s" (concat ms "_")
+		   s l)
+	  (if (= 1 l)
+	      (call-interactively 'ess-cycle-assign)
+	    (insert "_")))))))
 
 ;;;###autoload
 (defun ess-smart-underscore ()
