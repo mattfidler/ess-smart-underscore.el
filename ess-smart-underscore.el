@@ -366,10 +366,10 @@ an underscore is always inserted. "
       (save-match-data
 	(looking-back "\\<\\w+")
 	(let* ((ms (match-string 0))
-	       (s (ess-r-get-rcompletions nil nil (concat ms  "_")))
+	       (s (delete-dups (ess-r-get-rcompletions nil nil (concat ms  "_"))))
 	       (l (length s)))
-	  (message "Message looking for %s; %s; %s" (concat ms "_")
-		   s l)
+	  ;; (message "Message looking for %s; %s; %s" (concat ms "_") ;
+	  ;; 	   s l)
 	  (if (= 1 l)
 	      (call-interactively 'ess-cycle-assign)
 	    (insert "_")))))))
